@@ -1,0 +1,31 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master]  # ou main si ta branche s'appelle main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push user-service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service ./microservices/user-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service
+
+      - name: Build and push salle-service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/salle-service ./microservices/salle-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/salle-service
+
+      - name: Build and push reservation-service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/reservation-service ./microservices/reservation-service
+          docker push ${{ secrets.DOCKER_USERNAME }}/reservation-service
