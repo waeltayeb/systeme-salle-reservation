@@ -1,0 +1,28 @@
+image:
+  repository: waeltayeb  # Ton nom Docker Hub
+  tag: latest
+
+services:
+  userService:
+    image:
+      repository: waeltayeb/user-service
+      tag: latest
+    service:
+      name: user-service
+      port: 5001
+
+  salleService:
+    image:
+      repository: waeltayeb/salle-service
+      tag: latest
+    service:
+      name: salle-service
+      port: 5002
+
+  reservationService:
+    image:
+      repository: waeltayeb/reservation-service
+      tag: latest
+    service:
+      name: reservation-service
+      port: 5003

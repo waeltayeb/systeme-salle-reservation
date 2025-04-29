@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.reservationService.service.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.services.reservationService.service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.reservationService.service.name }}
+    spec:
+      containers:
+        - name: {{ .Values.services.reservationService.service.name }}
+          image: {{ .Values.services.reservationService.image.repository }}:{{ .Values.services.reservationService.image.tag }}
+          ports:
+            - containerPort: {{ .Values.services.reservationService.service.port }}

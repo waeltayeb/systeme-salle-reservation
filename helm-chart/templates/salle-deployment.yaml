@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.services.salleService.service.name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.services.salleService.service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.services.salleService.service.name }}
+    spec:
+      containers:
+        - name: {{ .Values.services.salleService.service.name }}
+          image: {{ .Values.services.salleService.image.repository }}:{{ .Values.services.salleService.image.tag }}
+          ports:
+            - containerPort: {{ .Values.services.salleService.service.port }}
