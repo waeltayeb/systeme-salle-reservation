@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:4173"
+    networks:
+      - devnet
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    networks:
+      - devnet
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p=rootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user-service:
+    build: ./microservices/user-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./microservices/user-service:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=user_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+    command: flask run --host=0.0.0.0 --port=5001
+
+  salle-service:
+    build: ./microservices/salle-service
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./microservices/salle-service:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=salle_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+    command: flask run --host=0.0.0.0 --port=5002
+
+  reservation-service:
+    build: ./microservices/reservation-service
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./microservices/reservation-service:/app
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=app.py
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=reservation_db
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - devnet
+    command: flask run --host=0.0.0.0 --port=5003
+
+networks:
+  devnet:
+    driver: bridge

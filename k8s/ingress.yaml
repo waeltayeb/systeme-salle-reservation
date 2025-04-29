@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: frontend.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+    - host: api.local
+      http:
+        paths:
+          - path: /users
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 80
+          - path: /salles
+            pathType: Prefix
+            backend:
+              service:
+                name: salle-service
+                port:
+                  number: 80
+          - path: /reservations
+            pathType: Prefix
+            backend:
+              service:
+                name: reservation-service
+                port:
+                  number: 80

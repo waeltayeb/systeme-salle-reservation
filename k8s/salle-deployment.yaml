@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: salle-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: salle-service
+  template:
+    metadata:
+      labels:
+        app: salle-service
+    spec:
+      containers:
+        - name: salle-service
+          image: salle-service
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5002
+          env:
+            - name: MYSQL_HOST
+              value: mysql
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: rootpassword
+            - name: MYSQL_DB
+              value: salle_db
